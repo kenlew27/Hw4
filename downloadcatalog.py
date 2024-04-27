@@ -78,8 +78,18 @@ dep = ["anthropology/" ,
 "yiddish/",
 ]
 
+fallt = 0
+wintert = 0
+springt = 0
+
 
 def catalog(departmentlink):
+
+
+   
+
+
+
     eachdepartment= startinglink + departmentlink
     department = requests.get(eachdepartment)
     soup = BeautifulSoup(department.text, "lxml")
@@ -216,18 +226,30 @@ def catalog(departmentlink):
     #print(len(equivlist))
     #print(len(prereqlist))
 
+    fallc = sum('Autumn' in s for s in termslist)
+    winterc = sum('Winter' in s for s in termslist)
+    springc = sum('Spring' in s for s in termslist)
+    
     df = pd.DataFrame({"Course Number": numberlist , "Description": desclist, "Instructor": instructorlist, "Terms": termslist, "Equivalent Courses": equivlist, "PreReq": prereqlist})
     dfdep = pd.DataFrame({"Code": [name] , "Number of Courses": [len(numberlist)]})
-    return (df, dfdep)
+    return (df, dfdep, fallc, winterc, springc)
 
 
 for departments in dep:
     dfsolution = pd.concat([dfsolution, catalog(departments)[0]], ignore_index=True)
     dfdepartment = pd.concat([dfdepartment, catalog(departments)[1]]  , ignore_index=True) 
 
+    fallt += catalog(departments)[2]
+    wintert += catalog(departments)[3]
+    springt += catalog(departments)[4]
+print(fallt)
+print(wintert)
+print(springt)
 
-dfsolution.to_csv('catalog.csv')
-dfdepartment.to_csv('department.csv')
+
+
+#dfsolution.to_csv('catalog.csv')
+#dfdepartment.to_csv('department.csv')
 
 
 
